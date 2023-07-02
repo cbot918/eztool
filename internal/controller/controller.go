@@ -1,4 +1,4 @@
-package main
+package controller
 
 import (
 	"context"
@@ -41,9 +41,4 @@ func (ctr *Controller) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": msg,
 	})
-}
-
-func (ctr *Controller) HandleUserData(c *gin.Context) {
-
-	log(c.Params.Get("id"))
 }
