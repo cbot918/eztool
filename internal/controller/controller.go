@@ -3,10 +3,21 @@ package controller
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+)
+
+var (
+	log  = fmt.Println
+	logf = fmt.Printf
+	logj = func(obj interface{}) {
+		bytes, _ := json.MarshalIndent(obj, "", "  ")
+		fmt.Println(string(bytes))
+	}
 )
 
 type Controller struct {
@@ -36,9 +47,32 @@ func (ctr *Controller) Health(c *gin.Context) {
 		msg += "cache ping failed"
 	}
 	if msg == "" {
-		msg += "db cache ok"
+		msg += "db ok cache ok"
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": msg,
 	})
+}
+
+type SignupParam struct {
+	A string `json:"a"`
+}
+
+type SignupResponse struct {
+}
+
+func (ctr *Controller) Signup(c *gin.Context) {
+	req := &SignupParam{}
+	if err := c.BindJSON(&req); err != nil {
+		log("c.BindJSON failed")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "wrong request body",
+		})
+		return
+	}
+	logj(req)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "signup",
+	})
+	//
 }
