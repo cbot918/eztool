@@ -12,5 +12,6 @@ func NewRouter(r *gin.Engine, dep *Dep) *gin.Engine {
 	r.GET("/health", ctr.Health)
 	r.POST("/auth/signin")
 	r.POST("/auth/signup", ctr.Signup)
+	r.POST("/install", ctr.Install)
 	return r
 }

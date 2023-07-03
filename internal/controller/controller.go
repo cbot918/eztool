@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/cbot918/eztool/internal/util"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 )
@@ -51,6 +52,27 @@ func (ctr *Controller) Health(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": msg,
+	})
+}
+
+type InstallParam struct {
+	Name string `json:"name" binding:"required"`
+}
+
+type InstallResponse struct {
+	Message string `json:"message"`
+}
+
+func (ctr *Controller) Install(c *gin.Context) {
+	req := &InstallParam{}
+	if err := c.BindJSON(&req); err != nil {
+		log(err)
+		c.JSON(http.StatusBadRequest, util.MessageResponse("wrong request body"))
+		return
+	}
+
+	c.JSON(http.StatusOK, &InstallResponse{
+		Message: "api install called",
 	})
 }
 
