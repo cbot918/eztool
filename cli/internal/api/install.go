@@ -9,11 +9,9 @@ import (
 )
 
 type InstallRequest struct {
-	Name string `json:"name" `
-}
-
-type InstallResponse struct {
-	Message string `json:"message"`
+	Name   string `json:"name" `
+	Token  string `json:"token"`
+	Target string `json:"target"`
 }
 
 func Install() {
@@ -41,6 +39,13 @@ func Install() {
 		u.Log(resp)
 		return
 	}
-	service := service.NewService()
-	service.Install()
+	// mock response from eztool service
+	cfg := &service.InstallResponse{
+		Message: "mock response",
+		Name:    "yale918",
+		Token:   "12345",
+		Target:  "gob",
+	}
+	svc := service.NewService()
+	svc.Install(cfg)
 }

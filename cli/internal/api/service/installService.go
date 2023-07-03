@@ -14,29 +14,51 @@ func NewService() *Service {
 	return &Service{}
 }
 
-func (s *Service) Install() {
-	name := "yale918"
-	auth := true
-	installTarget := "gob"
+type InstallResponse struct {
+	Message string `json:"message"`
+	Name    string `json:"name"`
+	Token   string `json:"token"`
+	Target  string `json:"target"`
+}
 
-	if !auth {
+// mock token validation
+func isTokenValid(tok string) bool {
+	return true
+}
+
+func (s *Service) Install(cfg *InstallResponse) {
+	// params should pass from function input
+
+	name := cfg.Name
+	auth := cfg.Token
+	installTarget := cfg.Target
+
+	// mock auth
+	if !isTokenValid(auth) {
 		fmt.Println("驗證未通過")
 		return
 	}
+
+	// prepare install_tmp folder
 	path := pkg.GetHome() + "/.eztool/temp/tmp" + util.GetUuid()
 	pkg.Mkdir(path)
 	pkg.Cd(path)
 
+	// dl config_file from mock server using mock downloader(?)
 	murl := "http://localhost:8100" + "/" + name + "/" + installTarget + "/" + "Makefile"
 	err := pkg.Downloader(murl)
 	if err != nil {
 		fmt.Println("pkg.Downloader failed in Install")
 		log.Fatal(err)
 	}
+
+	// execute config file
 	if err = pkg.Exec("make"); err != nil {
 		fmt.Println("pkg.Exec make failed in Install")
 		log.Fatal(err)
 	}
+
+	// verify downloaded binary
 	if !pkg.Contains(pkg.Ls(path), installTarget) {
 		fmt.Println("something wrong")
 	}
